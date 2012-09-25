@@ -26,10 +26,7 @@ LibPNG can be compiled using various modes. Only the following list can be used 
 
 ## Compile
 
-Compilation is easy done using MSBuild.exe
-
-  * put zlib sources into the "zlib" sibling directory
-  * ivoke the following commands
+Compilation is easy done using MSBuild.exe. Put zlib sources into the "zlib" sibling directory relative to the libpng sources and ivoke the following commands 
 
     cd projects\php_build_vc9
     msbuild /property:Configuration="Lib Release" property:Platform=Win32 libpng.sln 
