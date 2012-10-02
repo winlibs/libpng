@@ -1,7 +1,7 @@
 
 /* pngerror.c - stub functions for i/o and memory allocation
  *
- * Last changed in libpng 1.4.8 [July 7, 2011]
+ * Last changed in libpng 1.2.45 [July 7, 2011]
  * Copyright (c) 1998-2011 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
@@ -16,10 +16,10 @@
  * at each function.
  */
 
+#define PNG_INTERNAL
 #define PNG_NO_PEDANTIC_WARNINGS
 #include "png.h"
 #if defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED)
-#include "pngpriv.h"
 
 static void /* PRIVATE */
 png_default_error PNGARG((png_structp png_ptr,
@@ -87,7 +87,7 @@ png_error(png_structp png_ptr, png_const_charp error_message)
 void PNGAPI
 png_err(png_structp png_ptr)
 {
-   /* Prior to 1.4.8 the error_fn received a NULL pointer, expressed
+   /* Prior to 1.2.45 the error_fn received a NULL pointer, expressed
     * erroneously as '\0', instead of the empty string "".  This was
     * apparently an error, introduced in libpng-1.2.20, and png_default_error
     * will crash in this case.
@@ -240,22 +240,6 @@ png_chunk_benign_error(png_structp png_ptr, png_const_charp error_message)
 #endif
 #endif /* PNG_READ_SUPPORTED */
 
-#ifdef PNG_SETJMP_SUPPORTED
-/* This API only exists if ANSI-C style error handling is used,
- * otherwise it is necessary for png_default_error to be overridden.
- */
-jmp_buf* PNGAPI
-png_set_longjmp_fn(png_structp png_ptr, png_longjmp_ptr longjmp_fn,
-    size_t jmp_buf_size)
-{
-   if (png_ptr == NULL || jmp_buf_size != png_sizeof(jmp_buf))
-      return NULL;
-
-   png_ptr->longjmp_fn = longjmp_fn;
-   return &png_ptr->jmpbuf;
-}
-#endif
-
 /* This is the default error handling function.  Note that replacements for
  * this function MUST NOT RETURN, or the program will likely crash.  This
  * function is used by default, or if the program supplies NULL for the
@@ -300,23 +284,23 @@ png_default_error(png_structp png_ptr, png_const_charp error_message)
 #endif
 
 #ifdef PNG_SETJMP_SUPPORTED
-   if (png_ptr && png_ptr->longjmp_fn)
+   if (png_ptr)
    {
 #  ifdef USE_FAR_KEYWORD
    {
       jmp_buf jmpbuf;
       png_memcpy(jmpbuf, png_ptr->jmpbuf, png_sizeof(jmp_buf));
-     png_ptr->longjmp_fn(jmpbuf, 1);
+     longjmp(jmpbuf,1);
    }
 #  else
-   png_ptr->longjmp_fn(png_ptr->jmpbuf, 1);
+   longjmp(png_ptr->jmpbuf, 1);
 #  endif
    }
 #endif
    /* Here if not setjmp support or if png_ptr is null. */
    PNG_ABORT();
 #ifndef PNG_CONSOLE_IO_SUPPORTED
-   PNG_UNUSED(error_message) /* Make compiler happy */
+   error_message = error_message; /* Make compiler happy */
 #endif
 }
 
@@ -362,9 +346,9 @@ png_default_warning(png_structp png_ptr, png_const_charp warning_message)
      fprintf(stderr, PNG_STRING_NEWLINE);
    }
 #else
-   PNG_UNUSED(warning_message) /* Make compiler happy */
+   warning_message = warning_message; /* Make compiler happy */
 #endif
-   PNG_UNUSED(png_ptr) /* Make compiler happy */
+   png_ptr = png_ptr; /* Make compiler happy */
 }
 #endif /* PNG_WARNINGS_SUPPORTED */
 
@@ -390,7 +374,7 @@ png_set_error_fn(png_structp png_ptr, png_voidp error_ptr,
  * pointer before png_write_destroy and png_read_destroy are called.
  */
 png_voidp PNGAPI
-png_get_error_ptr(png_const_structp png_ptr)
+png_get_error_ptr(png_structp png_ptr)
 {
    if (png_ptr == NULL)
       return NULL;

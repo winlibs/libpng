@@ -25,7 +25,7 @@ OBJS  = pngm2pnm$(O) png$(O) pngerror$(O) pngget$(O) pngmem$(O) \
 
 # implicit make rules -------------------------------------------------------
 
-.c$(O): png.h pngconf.h pngpriv.h pngusr.h zlib.h
+.c$(O): png.h pngconf.h pngusr.h zlib.h
 	$(CC) -c $(CFLAGS) $<
 
 # dependencies
@@ -34,6 +34,7 @@ all: pngm2pnm$(E)
 
 pngm2pnm$(E): $(OBJS)
 	$(LD) -o pngm2pnm$(E) $(OBJS)
+	strip pngm2pnm$(E)
 
 clean:
 	$(RM) pngm2pnm$(O)
