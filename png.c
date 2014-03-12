@@ -1,8 +1,8 @@
 
 /* png.c - location for general purpose libpng functions
  *
- * Last changed in libpng 1.5.14 [January 24, 2013]
- * Copyright (c) 1998-2013 Glenn Randers-Pehrson
+ * Last changed in libpng 1.5.18 [February 6, 2014]
+ * Copyright (c) 1998-2014 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -14,7 +14,7 @@
 #include "pngpriv.h"
 
 /* Generate a compiler error if there is an old png.h in the search path. */
-typedef png_libpng_version_1_5_14 Your_png_h_is_not_version_1_5_14;
+typedef png_libpng_version_1_5_18 Your_png_h_is_not_version_1_5_18;
 
 /* Tells libpng that we have already handled the first "num_bytes" bytes
  * of the PNG file signature.  If the PNG data is embedded into another
@@ -658,14 +658,14 @@ png_get_copyright(png_const_structp png_ptr)
 #else
 #  ifdef __STDC__
    return PNG_STRING_NEWLINE \
-     "libpng version 1.5.14 - January 24, 2013" PNG_STRING_NEWLINE \
-     "Copyright (c) 1998-2013 Glenn Randers-Pehrson" PNG_STRING_NEWLINE \
+     "libpng version 1.5.18 - February 6, 2014" PNG_STRING_NEWLINE \
+     "Copyright (c) 1998-2014 Glenn Randers-Pehrson" PNG_STRING_NEWLINE \
      "Copyright (c) 1996-1997 Andreas Dilger" PNG_STRING_NEWLINE \
      "Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc." \
      PNG_STRING_NEWLINE;
 #  else
-      return "libpng version 1.5.14 - January 24, 2013\
-      Copyright (c) 1998-2013 Glenn Randers-Pehrson\
+      return "libpng version 1.5.18 - February 6, 2014\
+      Copyright (c) 1998-2014 Glenn Randers-Pehrson\
       Copyright (c) 1996-1997 Andreas Dilger\
       Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.";
 #  endif
@@ -1221,14 +1221,6 @@ png_check_IHDR(png_structp png_ptr,
       png_warning(png_ptr, "Invalid image height in IHDR");
       error = 1;
    }
-
-   if (width > (PNG_UINT_32_MAX
-                 >> 3)      /* 8-byte RGBA pixels */
-                 - 48       /* bigrowbuf hack */
-                 - 1        /* filter byte */
-                 - 7*8      /* rounding of width to multiple of 8 pixels */
-                 - 8)       /* extra max_pixel_depth pad */
-      png_warning(png_ptr, "Width is too large for libpng to process pixels");
 
    /* Check other values */
    if (bit_depth != 1 && bit_depth != 2 && bit_depth != 4 &&
@@ -1907,7 +1899,7 @@ png_fixed(png_structp png_ptr, double fp, png_const_charp text)
 #endif
 
 #if defined(PNG_READ_GAMMA_SUPPORTED) || \
-    defined(PNG_INCH_CONVERSIONS_SUPPORTED) || defined(PNG__READ_pHYs_SUPPORTED)
+    defined(PNG_INCH_CONVERSIONS_SUPPORTED) || defined(PNG_READ_pHYs_SUPPORTED)
 /* muldiv functions */
 /* This API takes signed arguments and rounds the result to the nearest
  * integer (or, for a fixed point number - the standard argument - to
@@ -2047,7 +2039,7 @@ png_muldiv_warn(png_structp png_ptr, png_fixed_point a, png_int_32 times,
 }
 #endif
 
-#if (defined PNG_READ_GAMMA_SUPPORTED) || (defined PNG_cHRM_SUPPORTED)
+#if defined(PNG_READ_GAMMA_SUPPORTED) || defined(PNG_cHRM_SUPPORTED)
 /* more fixed point functions for gamma and cHRM (xy/XYZ) suport. */
 /* Calculate a reciprocal, return 0 on div-by-zero or overflow. */
 png_fixed_point
@@ -2529,6 +2521,7 @@ png_gamma_significant(png_fixed_point gamma_val)
        gamma_val > PNG_FP_1 + PNG_GAMMA_THRESHOLD_FIXED;
 }
 
+#ifdef PNG_16BIT_SUPPORTED
 /* Internal function to build a single 16-bit table - the table consists of
  * 'num' 256-entry subtables, where 'num' is determined by 'shift' - the amount
  * to shift the input values right (or 16-number_of_signifiant_bits).
@@ -2601,6 +2594,7 @@ png_build_16bit_table(png_structp png_ptr, png_uint_16pp *ptable,
       }
    }
 }
+#endif
 
 /* NOTE: this function expects the *inverse* of the overall gamma transformation
  * required.
@@ -2878,3 +2872,24 @@ png_build_gamma_table(png_structp png_ptr, int bit_depth)
 }
 #endif /* READ_GAMMA */
 #endif /* defined(PNG_READ_SUPPORTED) || defined(PNG_WRITE_SUPPORTED) */
+
+/* HARDWARE OPTION SUPPORT */
+#ifdef PNG_SET_OPTION_SUPPORTED
+int PNGAPI
+png_set_option(png_structp png_ptr, int option, int onoff)
+{
+   if (png_ptr != NULL && option >= 0 && option < PNG_OPTION_NEXT &&
+      (option & 1) == 0)
+   {
+      int mask = 3 << option;
+      int setting = (2 + (onoff != 0)) << option;
+      int current = png_ptr->options;
+
+      png_ptr->options = (png_byte)((current & ~mask) | setting);
+
+      return (current & mask) >> option;
+   }
+
+   return PNG_OPTION_INVALID;
+}
+#endif

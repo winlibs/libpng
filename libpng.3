@@ -1,6 +1,6 @@
-.TH LIBPNG 3 "January 24, 2013"
+.TH LIBPNG 3 "February 6, 2014"
 .SH NAME
-libpng \- Portable Network Graphics (PNG) Reference Library 1.5.14
+libpng \- Portable Network Graphics (PNG) Reference Library 1.5.18
 .SH SYNOPSIS
 \fB
 #include <png.h>\fP
@@ -277,7 +277,7 @@ libpng \- Portable Network Graphics (PNG) Reference Library 1.5.14
 
 \fBvoid png_set_bKGD (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, png_color_16p \fIbackground\fP\fB);\fP
 
-\fBvoid png_set_check_for_invalid_index(png_structrp \fP\fIpng_ptr\fP\fB, int \fIallowed\fP\fB);\fP
+\fBvoid png_set_check_for_invalid_index(png_structp \fP\fIpng_ptr\fP\fB, int \fIallowed\fP\fB);\fP
 
 \fBvoid png_set_cHRM (png_structp \fP\fIpng_ptr\fP\fB, png_infop \fP\fIinfo_ptr\fP\fB, double \fP\fIwhite_x\fP\fB, double \fP\fIwhite_y\fP\fB, double \fP\fIred_x\fP\fB, double \fP\fIred_y\fP\fB, double \fP\fIgreen_x\fP\fB, double \fP\fIgreen_y\fP\fB, double \fP\fIblue_x\fP\fB, double \fIblue_y\fP\fB);\fP
 
@@ -492,10 +492,10 @@ Following is a copy of the libpng-manual.txt file that accompanies libpng.
 .SH LIBPNG.TXT
 Libpng-manual.txt - A description on how to use and modify libpng
 
- libpng version 1.5.14 - January 24, 2013
+ libpng version 1.5.18 - February 6, 2014
  Updated and distributed by Glenn Randers-Pehrson
  <glennrp at users.sourceforge.net>
- Copyright (c) 1998-2012 Glenn Randers-Pehrson
+ Copyright (c) 1998-2014 Glenn Randers-Pehrson
 
  This document is released under the libpng license.
  For conditions of distribution and use, see the disclaimer
@@ -503,9 +503,9 @@ Libpng-manual.txt - A description on how to use and modify libpng
 
  Based on:
 
- libpng versions 0.97, January 1998, through 1.5.14 - January 24, 2013
+ libpng versions 0.97, January 1998, through 1.5.18 - February 6, 2014
  Updated and distributed by Glenn Randers-Pehrson
- Copyright (c) 1998-2012 Glenn Randers-Pehrson
+ Copyright (c) 1998-2014 Glenn Randers-Pehrson
 
  libpng 1.0 beta 6  version 0.96 May 28, 1997
  Updated and distributed by Andreas Dilger
@@ -523,9 +523,7 @@ Libpng-manual.txt - A description on how to use and modify libpng
 .SH I. Introduction
 
 This file describes how to use and modify the PNG reference library
-(known as libpng) for your own use.  There are five sections to this
-file: introduction, structures, reading, writing, and modification and
-configuration notes for various special platforms.  In addition to this
+(known as libpng) for your own use.  In addition to this
 file, example.c is a good starting point for using the library, as
 it is heavily commented and should include everything most people
 will need.  We assume that libpng is already installed; see the
@@ -643,7 +641,7 @@ All APIs that take (double) arguments also have a matching API that
 takes the corresponding fixed point integer arguments.  The fixed point
 API has the same name as the floating point one with "_fixed" appended.
 The actual range of values permitted in the APIs is frequently less than
-the full range of (png_fixed_point) (-21474 to +21474).  When APIs require
+the full range of (png_fixed_point) (\-21474 to +21474).  When APIs require
 a non-negative argument the type is recorded as png_uint_32 above.  Consult
 the header file and the text below for more information.
 
@@ -684,7 +682,7 @@ The easiest way to make minor changes to the libpng configuration when
 auto-configuration is supported is to add definitions to the command line
 using (typically) CPPFLAGS.  For example:
 
-CPPFLAGS=-DPNG_NO_FLOATING_ARITHMETIC
+CPPFLAGS=\-DPNG_NO_FLOATING_ARITHMETIC
 
 will change the internal libpng math implementation for gamma correction and
 other arithmetic calculations to fixed point, avoiding the need for fast
@@ -692,7 +690,7 @@ floating point support.  The result can be seen in the generated pnglibconf.h -
 make sure it contains the changed feature macro setting.
 
 If you need to make more extensive configuration changes - more than one or two
-feature macro settings - you can either add -DPNG_USER_CONFIG to the build
+feature macro settings - you can either add \-DPNG_USER_CONFIG to the build
 command line and put a list of feature macro settings in pngusr.h or you can set
 DFA_XTRA (a makefile variable) to a file containing the same information in the
 form of 'option' settings.
@@ -751,7 +749,7 @@ pngusr.dfa in these directories.
 
 C. Configuration using PNG_USR_CONFIG
 
-If -DPNG_USR_CONFIG is added to the CFLAGS when pnglibconf.h is built the file
+If \-DPNG_USR_CONFIG is added to the CFLAGS when pnglibconf.h is built the file
 pngusr.h will automatically be included before the options in
 scripts/pnglibconf.dfa are processed.  Your pngusr.h file should contain only
 macro definitions turning features on or off or setting settings.
@@ -981,7 +979,7 @@ input stream. You must supply the function
           unknown chunk structure, process it, and return one
           of the following: */
 
-       return (-n); /* chunk had an error */
+       return (\-n); /* chunk had an error */
        return (0); /* did not recognize */
        return (n); /* success */
     }
@@ -1001,8 +999,7 @@ you can retrieve with
 
 If you call the png_set_read_user_chunk_fn() function, then all unknown
 chunks will be saved when read, in case your callback function will need
-one or more of them.  This behavior can be changed with the
-png_set_keep_unknown_chunks() function, described below.
+one or more of them.
 
 At this point, you can set up a callback function that will be
 called after each row has been read, which you can use to control
@@ -1027,7 +1024,7 @@ non-interlaced case the row that was just handled is simply one less than the
 passed in row number, and pass will always be 0.  For the interlaced case the
 same applies unless the row value is 0, in which case the row just handled was
 the last one from one of the preceding passes.  Because interlacing may skip a
-pass you cannot be sure that the preceding pass is just 'pass-1', if you really
+pass you cannot be sure that the preceding pass is just 'pass\-1', if you really
 need to know what the last pass is record (row,pass) from the callback and use
 the last recorded value each time.
 
@@ -1096,20 +1093,24 @@ callback function:
 
     #if defined(PNG_UNKNOWN_CHUNKS_SUPPORTED)
       /* ignore all unknown chunks: */
+    #  if PNG_LIBPNG_VER < 10700
+      png_set_keep_unknown_chunks(read_ptr, 2, NULL, 0);
+    #  else
       png_set_keep_unknown_chunks(read_ptr, 1, NULL, 0);
+    #  endif
 
       /* except for vpAg: */
       png_set_keep_unknown_chunks(read_ptr, 2, vpAg, 1);
 
       /* also ignore unused known chunks: */
       png_set_keep_unknown_chunks(read_ptr, 1, unused_chunks,
-         (int)sizeof(unused_chunks)/5);
+         (int)png_sizeof(unused_chunks)/5);
     #endif
 
 .SS User limits
 
 The PNG specification allows the width and height of an image to be as
-large as 2^31-1 (0x7fffffff), or about 2.147 billion rows and columns.
+large as 2^(31\-1 (0x7fffffff), or about 2.147 billion rows and columns.
 Since very few applications really need to process such large images,
 we have imposed an arbitrary 1-million limit on rows and columns.
 Larger images will be rejected immediately with a png_error() call. If
@@ -1198,7 +1199,7 @@ situations:
                      system expects data with no gamma encoding.
 
 You would use the linear (unencoded) value if you need to process the pixel
-values further because this avoids the need to decode and reencode each
+values further because this avoids the need to decode and re-encode each
 component value whenever arithmetic is performed.  A lot of graphics software
 uses linear values for this reason, often with higher precision component values
 to preserve overall accuracy.
@@ -2669,13 +2670,13 @@ point to libpng-allocated storage with the following function:
            or simply PNG_FREE_ALL
 
     seq  - sequence number of item to be freed
-           (-1 for all items)
+           (\-1 for all items)
 
 This function may be safely called when the relevant storage has
 already been freed, or has not yet been allocated, or was allocated
 by the user and not by libpng,  and will in those cases do nothing.
 The "seq" parameter is ignored if only one item of the selected data
-type, such as PLTE, is allowed.  If "seq" is not -1, and multiple items
+type, such as PLTE, is allowed.  If "seq" is not \-1, and multiple items
 are allowed for the data type identified in the mask, such as text or
 sPLT, only the n'th item in the structure is freed, where n is "seq".
 
@@ -2739,7 +2740,7 @@ For a more compact example of reading a PNG image, see the file example.c.
 
 .SS Reading PNG files progressively
 
-The progressive reader is slightly different then the non-progressive
+The progressive reader is slightly different from the non-progressive
 reader.  Instead of calling png_read_info(), png_read_rows(), and
 png_read_end(), you make one call to png_process_data(), which calls
 callbacks when it has the info, a row, or the end of the image.  You
@@ -3062,7 +3063,7 @@ non-interlaced case the row that was just handled is simply one less than the
 passed in row number, and pass will always be 0.  For the interlaced case the
 same applies unless the row value is 0, in which case the row just handled was
 the last one from one of the preceding passes.  Because interlacing may skip a
-pass you cannot be sure that the preceding pass is just 'pass-1', if you really
+pass you cannot be sure that the preceding pass is just 'pass\-1', if you really
 need to know what the last pass is record (row,pass) from the callback and use
 the last recorded value each time.
 
@@ -3526,13 +3527,45 @@ from PNG time to an RFC 1123 format string.
 
 .SS Writing unknown chunks
 
-You can use the png_set_unknown_chunks function to queue up chunks
-for writing.  You give it a chunk name, raw data, and a size; that's
-all there is to it.  The chunks will be written by the next following
-png_write_info_before_PLTE, png_write_info, or png_write_end function.
-Any chunks previously read into the info structure's unknown-chunk
-list will also be written out in a sequence that satisfies the PNG
-specification's ordering rules.
+You can use the png_set_unknown_chunks function to queue up private chunks
+for writing.  You give it a chunk name, location, raw data, and a size.  You
+also must use png_set_keep_unknown_chunks() to ensure that libpng will
+handle them.  That's all there is to it.  The chunks will be written by the
+next following png_write_info_before_PLTE, png_write_info, or png_write_end
+function, depending upon the specified location.  Any chunks previously
+read into the info structure's unknown-chunk list will also be written out
+in a sequence that satisfies the PNG specification's ordering rules.
+
+Here is an example of writing two private chunks, prVt and miNE:
+
+    #ifdef PNG_WRITE_UNKNOWN_CHUNKS_SUPPORTED
+    /* Set unknown chunk data */
+    png_unknown_chunk unk_chunk[2];
+    strcpy((char *) unk_chunk[0].name, "prVt";
+    unk_chunk[0].data = (unsigned char *) "PRIVATE DATA";
+    unk_chunk[0].size = strlen(unk_chunk[0].data)+1;
+    unk_chunk[0].location = PNG_HAVE_IHDR;
+    strcpy((char *) unk_chunk[1].name, "miNE";
+    unk_chunk[1].data = (unsigned char *) "MY CHUNK DATA";
+    unk_chunk[1].size = strlen(unk_chunk[0].data)+1;
+    unk_chunk[1].location = PNG_AFTER_IDAT;
+    png_set_unknown_chunks(write_ptr, write_info_ptr,
+        unk_chunk, 2);
+    /* Needed because miNE is not safe-to-copy */
+    png_set_keep_unknown_chunks(png, PNG_HANDLE_CHUNK_ALWAYS,
+       (png_bytep) "miNE", 1);
+    /* Deal with unknown chunk location bug in 1.5.x and earlier */
+    png_set_unknown_chunk_location(png, info, 0, PNG_HAVE_IHDR);
+    png_set_unknown_chunk_location(png, info, 1, PNG_AFTER_IDAT);
+    # if PNG_LIBPNG_VER < 10500
+      /* PNG_AFTER_IDAT writes two copies of the chunk prior to libpng-1.5.0,
+       * one before IDAT and another after IDAT, so don't use it; only use
+       * PNG_HAVE_IHDR location.  This call resets the location previously
+       * set by assignment and png_set_unknown_chunk_location() for chunk 1.
+       */
+      png_set_unknown_chunk_location(png, info, 1, PNG_HAVE_IHDR);
+    # endif
+    #endif
 
 .SS The high-level write interface
 
@@ -3867,13 +3900,13 @@ point to libpng-allocated storage with the following function:
             or simply PNG_FREE_ALL
 
     seq   - sequence number of item to be freed
-            (-1 for all items)
+            (\-1 for all items)
 
 This function may be safely called when the relevant storage has
 already been freed, or has not yet been allocated, or was allocated
 by the user  and not by libpng,  and will in those cases do nothing.
 The "seq" parameter is ignored if only one item of the selected data
-type, such as PLTE, is allowed.  If "seq" is not -1, and multiple items
+type, such as PLTE, is allowed.  If "seq" is not \-1, and multiple items
 are allowed for the data type identified in the mask, such as text or
 sPLT, only the n'th item in the structure is freed, where n is "seq".
 
@@ -4335,12 +4368,12 @@ the message, "message" is the formatted string to be printed,
 and p1 and p2 are parameters that are to be embedded in the string
 according to printf-style formatting directives.  For example,
 
-   png_debug1(2, "foo=%d\n", foo);
+   png_debug1(2, "foo=%d", foo);
 
 is expanded to
 
    if (PNG_DEBUG > 2)
-      fprintf(PNG_DEBUG_FILE, "foo=%d\n", foo);
+      fprintf(PNG_DEBUG_FILE, "foo=%d\en", foo);
 
 When PNG_DEBUG is defined but is zero, the macros aren't defined, but you
 can still use PNG_DEBUG to control your own debugging:
@@ -4414,6 +4447,9 @@ to set the error callbacks AFTER png_read_init(), or to change them with
 png_set_error_fn(), which is essentially the same function, but with a new
 name to force compilation errors with applications that try to use the old
 method.
+
+Support for the sCAL, iCCP, iTXt, and sPLT chunks was added at libpng-1.0.6;
+however, iTXt support was not enabled by default.
 
 Starting with version 1.0.7, you can find out which version of the library
 you are using at run-time:
@@ -4631,7 +4667,7 @@ it has not been well tested and doesn't actually "dither".
 The code was not
 removed, however, and could be enabled by building libpng with
 PNG_READ_DITHER_SUPPORTED defined.  In libpng-1.4.2, this support
-was reenabled, but the function was renamed png_set_quantize() to
+was re-enabled, but the function was renamed png_set_quantize() to
 reflect more accurately what it actually does.  At the same time,
 the PNG_DITHER_[RED,GREEN_BLUE]_BITS macros were also renamed to
 PNG_QUANTIZE_[RED,GREEN,BLUE]_BITS, and PNG_READ_DITHER_SUPPORTED
@@ -4643,16 +4679,38 @@ We removed the trailing '.' from the warning and error messages.
 
 From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the
 function) incorrectly returned a value of type png_uint_32.
+The incorrect macro was removed from libpng-1.4.5.
 
-Checking for invalid palette index on read or write was added at libpng
-1.5.10.  When an invalid index is found, libpng issues a benign error.
-This is enabled by default but can be disabled in each png_ptr with
+Checking for invalid palette index on write was added at libpng
+1.5.10.  If a pixel contains an invalid (out-of-range) index libpng issues
+a benign error.  This is enabled by default because this condition is an
+error according to the PNG specification, Clause 11.3.2, but the error can
+be ignored in each png_ptr with
 
    png_set_check_for_invalid_index(png_ptr, allowed);
 
       allowed  - one of
-                 0: disable
-                 1: enable
+                 0: disable benign error (accept the
+                    invalid data without warning).
+                 1: enable benign error (treat the
+                    invalid data as an error or a
+                    warning).
+
+If the error is ignored, or if png_benign_error() treats it as a warning,
+any invalid pixels are decoded as opaque black by the decoder and written
+as-is by the encoder.
+
+Retrieving the maximum palette index found was added at libpng-1.5.15.
+This statement must appear after png_read_png() or png_read_image() while
+reading, and after png_write_png() or png_write_image() while writing.
+
+   int max_palette = png_get_palette_max(png_ptr, info_ptr);
+
+This will return the maximum palette index found in the image, or "\-1" if
+the palette was not checked, or "0" if no palette was found.  Note that this
+does not account for any palette index used by ancillary chunks such as the
+bKGD chunk; you must check those separately to determine the maximum
+palette index actually used.
 
 A. Changes that affect users of libpng
 
@@ -4662,9 +4720,10 @@ members of the main libpng control structures, png_struct and png_info,
 deprecated in earlier versions of libpng, has been completely removed from
 libpng 1.5.
 
-We no longer include zlib.h in png.h.  Applications that need access
-to information in zlib.h will need to add the '#include "zlib.h"'
-directive.  It does not matter whether it is placed prior to or after
+We no longer include zlib.h in png.h.  The include statement has been moved
+to pngstruct.h, where it is not accessible by applications. Applications that
+need access to information in zlib.h will need to add the '#include "zlib.h"'
+directive.  It does not matter whether this is placed prior to or after
 the '"#include png.h"' directive.
 
 The png_sprintf(), png_strcpy(), and png_strncpy() macros are no longer used
@@ -4725,7 +4784,10 @@ and the accuracy of PNG fixed point values is insufficient for
 representation of these values. Consequently a "string" API
 (png_get_sCAL_s and png_set_sCAL_s) is the only reliable way of reading
 arbitrary sCAL chunks in the absence of either the floating point API or
-internal floating point calculations.
+internal floating point calculations.  Starting with libpng-1.5.0, both
+of these functions are present when PNG_sCAL_SUPPORTED is defined.  Prior
+to libpng-1.5.0, their presence also depended upon PNG_FIXED_POINT_SUPPORTED
+being defined and PNG_FLOATING_POINT_SUPPORTED not being defined.
 
 Applications no longer need to include the optional distribution header
 file pngusr.h or define the corresponding macros during application
@@ -4745,15 +4807,10 @@ reset by pngusr.h or by explicit settings on the compiler command line.
 These settings may produce compiler warnings or errors in 1.5.0 because
 of macro redefinition.
 
-From libpng-1.4.0 until 1.4.4, the png_get_uint_16 macro (but not the
-function) incorrectly returned a value of type png_uint_32.  libpng 1.5.0
-is consistent with the implementation in 1.4.5 and 1.2.x (where the macro
-did not exist.)
-
 Applications can now choose whether to use these macros or to call the
 corresponding function by defining PNG_USE_READ_MACROS or
 PNG_NO_USE_READ_MACROS before including png.h.  Notice that this is
-only supported from 1.5.0 -defining PNG_NO_USE_READ_MACROS prior to 1.5.0
+only supported from 1.5.0; defining PNG_NO_USE_READ_MACROS prior to 1.5.0
 will lead to a link failure.
 
 Prior to libpng-1.5.4, the zlib compressor used the same set of parameters
@@ -4767,7 +4824,10 @@ option was off by default, and slightly inaccurate scaling occurred.
 This option can no longer be turned off, and the choice of accurate
 or inaccurate 16-to-8 scaling is by using the new png_set_scale_16_to_8()
 API for accurate scaling or the old png_set_strip_16_to_8() API for simple
-chopping.
+chopping.  In libpng-1.5.4, the PNG_READ_16_TO_8_ACCURATE_SCALE_SUPPORTED
+macro became PNG_READ_SCALE_16_TO_8_SUPPORTED, and the PNG_READ_16_TO_8
+macro became PNG_READ_STRIP_16_TO_8_SUPPORTED, to enable the two
+png_set_*_16_to_8() functions separately.
 
 Prior to libpng-1.5.4, the png_set_user_limits() function could only be
 used to reduce the width and height limits from the value of
@@ -4788,6 +4848,9 @@ limits are now
    png_user_height_max       0x7fffffff    1,000,000
    png_user_chunk_cache_max  0 (unlimited)   128
    png_user_chunk_malloc_max 0 (unlimited) 8,000,000
+
+The png_set_option() function (and the "options" member of the png struct) was
+added to libpng-1.5.15.
 
 B. Changes to the build and configuration of libpng
 
@@ -4971,11 +5034,11 @@ control.  The git repository was built from old libpng-x.y.z.tar.gz files
 going back to version 0.70.  You can access the git repository (read only)
 at
 
-    git://libpng.git.sourceforge.net/gitroot/libpng
+    git://git.code.sf.net/p/libpng/code
 
-or you can browse it via "gitweb" at
+or you can browse it with a web browser by selecting the "code" button at
 
-    http://libpng.git.sourceforge.net/git/gitweb.cgi?p=libpng
+    https://sourceforge.net/projects/libpng/
 
 Patches can be sent to glennrp at users.sourceforge.net or to
 png-mng-implement at lists.sourceforge.net or you can upload them to
@@ -5085,11 +5148,12 @@ C binary operator and after "for" or "while", and before
 being cast, nor do we put one between a function name and the
 left parenthesis that follows it:
 
-    for (i = 2; i > 0; --i)
+    for (i = 2; i > 0; \-\-i)
        y[i] = a(x) + (int)b;
 
 We prefer #ifdef and #ifndef to #if defined() and #if !defined()
-when there is only one macro being tested.
+when there is only one macro being tested.  We always use parentheses
+with "defined".
 
 We prefer to express integers that are used as bit masks in hex format,
 with an even number of lower-case hex digits (e.g., 0x00, 0xff, 0x0100).
@@ -5102,13 +5166,13 @@ Other rules can be inferred by inspecting the libpng source.
 
 .SH XIV. Y2K Compliance in libpng
 
-January 24, 2013
+February 6, 2014
 
 Since the PNG Development group is an ad-hoc body, we can't make
 an official declaration.
 
 This is your unofficial assurance that libpng from version 0.71 and
-upward through 1.5.14 are Y2K compliant.  It is my belief that earlier
+upward through 1.5.18 are Y2K compliant.  It is my belief that earlier
 versions were also Y2K compliant.
 
 Libpng only has two year fields.  One is a 2-byte unsigned integer that
@@ -5331,6 +5395,18 @@ the first widely used release:
  1.5.14beta01-08     15    10514  15.so.15.14[.0]
  1.5.14rc01-03       15    10514  15.so.15.14[.0]
  1.5.14              15    10514  15.so.15.14[.0]
+ 1.5.15beta01-09     15    10515  15.so.15.15[.0]
+ 1.5.15rc01          15    10515  15.so.15.15[.0]
+ 1.5.15              15    10515  15.so.15.15[.0]
+ 1.5.16beta01-06     15    10516  15.so.15.16[.0]
+ 1.5.16rc01          15    10516  15.so.15.16[.0]
+ 1.5.16              15    10516  15.so.15.16[.0]
+ 1.5.17beta01        15    10517  15.so.15.17[.0]
+ 1.5.17rc01-03       15    10517  15.so.15.17[.0]
+ 1.5.17              15    10517  15.so.15.17[.0]
+ 1.5.18beta01-05     15    10518  15.so.15.18[.0]
+ 1.5.18rc01-02       15    10518  15.so.15.18[.0]
+ 1.5.18              15    10518  15.so.15.18[.0]
 
 Henceforth the source version will match the shared-library minor
 and patch numbers; the shared-library major version number will be
@@ -5387,7 +5463,7 @@ possible without all of you.
 
 Thanks to Frank J. T. Wojcik for helping with the documentation.
 
-Libpng version 1.5.14 - January 24, 2013:
+Libpng version 1.5.18 - February 6, 2014:
 Initially created in 1995 by Guy Eric Schalnat, then of Group 42, Inc.
 Currently maintained by Glenn Randers-Pehrson (glennrp at users.sourceforge.net).
 
@@ -5410,7 +5486,7 @@ this sentence.
 
 This code is released under the libpng license.
 
-libpng versions 1.2.6, August 15, 2004, through 1.5.14, January 24, 2013, are
+libpng versions 1.2.6, August 15, 2004, through 1.5.18, February 6, 2014, are
 Copyright (c) 2004,2006-2007 Glenn Randers-Pehrson, and are
 distributed according to the same disclaimer and license as libpng-1.2.5
 with the following individual added to the list of Contributing Authors
@@ -5509,7 +5585,7 @@ certification mark of the Open Source Initiative.
 
 Glenn Randers-Pehrson
 glennrp at users.sourceforge.net
-January 24, 2013
+February 6, 2014
 
 .\" end of man page
 

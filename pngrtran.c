@@ -1,8 +1,8 @@
 
 /* pngrtran.c - transforms the data in a row for PNG readers
  *
- * Last changed in libpng 1.5.14 [January 24, 2013]
- * Copyright (c) 1998-2013 Glenn Randers-Pehrson
+ * Last changed in libpng 1.5.18 [February 6, 2014]
+ * Copyright (c) 1998-2014 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -194,6 +194,8 @@ translate_gamma_flags(png_structp png_ptr, png_fixed_point output_gamma,
        */
 #     ifdef PNG_READ_sRGB_SUPPORTED
          png_ptr->flags |= PNG_FLAG_ASSUME_sRGB;
+#     else
+         PNG_UNUSED(png_ptr)
 #     endif
       if (is_screen)
          output_gamma = PNG_GAMMA_sRGB;
@@ -1093,19 +1095,25 @@ png_init_palette_transformations(png_structp png_ptr)
 
       /* Ignore if all the entries are opaque (unlikely!) */
       for (i=0; i<png_ptr->num_trans; ++i)
+      {
          if (png_ptr->trans_alpha[i] == 255)
             continue;
          else if (png_ptr->trans_alpha[i] == 0)
             input_has_transparency = 1;
          else
+         {
+            input_has_transparency = 1;
             input_has_alpha = 1;
+            break;
+         }
+      }
    }
 
    /* If no alpha we can optimize. */
    if (!input_has_alpha)
    {
       /* Any alpha means background and associative alpha processing is
-       * required, however if the alpha is 0 or 1 throughout OPTIIMIZE_ALPHA
+       * required, however if the alpha is 0 or 1 throughout OPTIMIZE_ALPHA
        * and ENCODE_ALPHA are irrelevant.
        */
       png_ptr->transformations &= ~PNG_ENCODE_ALPHA;
@@ -1170,7 +1178,7 @@ png_init_rgb_transformations(png_structp png_ptr)
    if (!input_has_alpha)
    {
       /* Any alpha means background and associative alpha processing is
-       * required, however if the alpha is 0 or 1 throughout OPTIIMIZE_ALPHA
+       * required, however if the alpha is 0 or 1 throughout OPTIMIZE_ALPHA
        * and ENCODE_ALPHA are irrelevant.
        */
 #     ifdef PNG_READ_ALPHA_MODE_SUPPORTED
@@ -2198,8 +2206,8 @@ png_do_read_transformations(png_structp png_ptr, png_row_infop row_info)
       png_do_gray_to_rgb(row_info, png_ptr->row_buf + 1);
 #endif
 
-#if (defined PNG_READ_BACKGROUND_SUPPORTED) ||\
-   (defined PNG_READ_ALPHA_MODE_SUPPORTED)
+#if defined(PNG_READ_BACKGROUND_SUPPORTED) ||\
+   defined(PNG_READ_ALPHA_MODE_SUPPORTED)
    if (png_ptr->transformations & PNG_COMPOSE)
       png_do_compose(row_info, png_ptr->row_buf + 1, png_ptr);
 #endif
@@ -2210,8 +2218,8 @@ png_do_read_transformations(png_structp png_ptr, png_row_infop row_info)
       /* Because RGB_TO_GRAY does the gamma transform. */
       !(png_ptr->transformations & PNG_RGB_TO_GRAY) &&
 #endif
-#if (defined PNG_READ_BACKGROUND_SUPPORTED) ||\
-   (defined PNG_READ_ALPHA_MODE_SUPPORTED)
+#if defined(PNG_READ_BACKGROUND_SUPPORTED) ||\
+   defined(PNG_READ_ALPHA_MODE_SUPPORTED)
       /* Because PNG_COMPOSE does the gamma transform if there is something to
        * do (if there is an alpha channel or transparency.)
        */
@@ -3477,8 +3485,8 @@ png_build_grayscale_palette(int bit_depth, png_colorp palette)
 
 
 #ifdef PNG_READ_TRANSFORMS_SUPPORTED
-#if (defined PNG_READ_BACKGROUND_SUPPORTED) ||\
-   (defined PNG_READ_ALPHA_MODE_SUPPORTED)
+#if defined(PNG_READ_BACKGROUND_SUPPORTED) ||\
+   defined(PNG_READ_ALPHA_MODE_SUPPORTED)
 /* Replace any alpha or transparency with the supplied background color.
  * "background" is already in the screen gamma, while "background_1" is
  * at a gamma of 1.0.  Paletted files have already been taken care of.

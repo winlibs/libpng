@@ -1,7 +1,7 @@
 
 /* pngconf.h - machine configurable file for libpng
  *
- * libpng version 1.5.14 - January 24, 2013
+ * libpng version 1.5.18 - February 6, 2014
  *
  * Copyright (c) 1998-2013 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
@@ -197,7 +197,7 @@
 #    define PNGCAPI __watcall
 #  endif
 
-#  if defined(__GNUC__) || (defined (_MSC_VER) && (_MSC_VER >= 800))
+#  if defined(__GNUC__) || (defined(_MSC_VER) && (_MSC_VER >= 800))
 #    define PNGCAPI __cdecl
 #    if PNG_API_RULE == 1
        /* If this line results in an error __stdcall is not understood and
@@ -338,6 +338,7 @@
    * functions in png.h will generate compiler warnings.  Added at libpng
    * version 1.2.41.
    */
+
 #  if defined(__GNUC__)
 #    ifndef PNG_USE_RESULT
 #      define PNG_USE_RESULT __attribute__((__warn_unused_result__))
@@ -361,7 +362,7 @@
             __attribute__((__deprecated__))
 #        endif
 #      endif
-#    endif /*  __GNUC__ >= 3 */
+#    endif /* __GNUC__ >= 3 */
 #  endif /* __GNUC__ */
 
 #  if defined(_MSC_VER)  && (_MSC_VER >= 1300)

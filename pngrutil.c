@@ -1,8 +1,8 @@
 
 /* pngrutil.c - utilities to read a PNG file
  *
- * Last changed in libpng 1.5.14 [January 24, 2013]
- * Copyright (c) 1998-2013 Glenn Randers-Pehrson
+ * Last changed in libpng 1.5.18 [February 6, 2014]
+ * Copyright (c) 1998-2014 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -17,8 +17,6 @@
 #include "pngpriv.h"
 
 #ifdef PNG_READ_SUPPORTED
-
-#define png_strtod(p,a,b) strtod(a,b)
 
 png_uint_32 PNGAPI
 png_get_uint_31(png_structp png_ptr, png_const_bytep buf)
@@ -283,6 +281,17 @@ png_inflate(png_structp png_ptr, png_bytep data, png_size_t size,
     png_bytep output, png_size_t output_size)
 {
    png_size_t count = 0;
+
+   /* HACK: added in libpng 1.5.18: the progressive reader always leaves
+    * png_ptr->zstream in a non-reset state.  This causes a reset if it needs to
+    * be used again.  This only copes with that one specific error; see libpng
+    * 1.6 for a better solution.
+    */
+   if ((png_ptr->flags & PNG_FLAG_ZSTREAM_PROGRESSIVE) != 0)
+   {
+      (void)inflateReset(&png_ptr->zstream);
+      png_ptr->flags &= ~PNG_FLAG_ZSTREAM_PROGRESSIVE;
+   }
 
    /* zlib can't necessarily handle more than 65535 bytes at once (i.e. it can't
     * even necessarily handle 65536 bytes) because the type uInt is "16 bits or
@@ -3161,7 +3170,7 @@ png_combine_row(png_structp png_ptr, png_bytep dp, int display)
                   {
                      png_uint_32p dp32 = (png_uint_32p)dp;
                      png_const_uint_32p sp32 = (png_const_uint_32p)sp;
-                     unsigned int skip = (bytes_to_jump-bytes_to_copy) /
+                     size_t skip = (bytes_to_jump-bytes_to_copy) /
                         sizeof (png_uint_32);
 
                      do
@@ -3202,7 +3211,7 @@ png_combine_row(png_structp png_ptr, png_bytep dp, int display)
                   {
                      png_uint_16p dp16 = (png_uint_16p)dp;
                      png_const_uint_16p sp16 = (png_const_uint_16p)sp;
-                     unsigned int skip = (bytes_to_jump-bytes_to_copy) /
+                     size_t skip = (bytes_to_jump-bytes_to_copy) /
                         sizeof (png_uint_16);
 
                      do
@@ -3486,7 +3495,7 @@ png_do_read_interlace(png_row_infop row_info, png_bytep row, int pass,
 
             for (i = 0; i < row_info->width; i++)
             {
-               png_byte v[8];
+               png_byte v[8]; /* SAFE; pixel_depth does not exceed 64 */
                int j;
 
                png_memcpy(v, sp, pixel_bytes);
@@ -3702,10 +3711,13 @@ void /* PRIVATE */
 png_read_filter_row(png_structp pp, png_row_infop row_info, png_bytep row,
    png_const_bytep prev_row, int filter)
 {
-   if (pp->read_filter[0] == NULL)
-      png_init_filter_functions(pp);
    if (filter > PNG_FILTER_VALUE_NONE && filter < PNG_FILTER_VALUE_LAST)
+   {
+      if (pp->read_filter[0] == NULL)
+         png_init_filter_functions(pp);
+
       pp->read_filter[filter-1](row_info, row, prev_row);
+   }
 }
 
 #ifdef PNG_SEQUENTIAL_READ_SUPPORTED

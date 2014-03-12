@@ -1,8 +1,8 @@
 
 /* pngwutil.c - utilities to write a PNG file
  *
- * Last changed in libpng 1.5.14 [January 24, 2013]
- * Copyright (c) 1998-2013 Glenn Randers-Pehrson
+ * Last changed in libpng 1.5.18 [February 6, 2014]
+ * Copyright (c) 1998-2014 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -315,6 +315,7 @@ png_zlib_release(png_structp png_ptr)
 
       if (ret != Z_OK)
       {
+#ifdef PNG_WARNINGS_SUPPORTED
          png_const_charp err;
          PNG_WARNING_PARAMETERS(p)
 
@@ -349,6 +350,7 @@ png_zlib_release(png_structp png_ptr)
 
          png_formatted_warning(png_ptr, p,
             "zlib failed to reset compressor: @1(@2): @3");
+#endif
       }
    }
 
