@@ -17,7 +17,8 @@ CPP = $(CC) -E # On SUN OS 5.10 if this causes problems use /lib/cpp
 MOVE = mv
 DELETE = rm -f
 ECHO = echo
-DFA_XTRA = # Appended to scripts/options.awk
+DFA_XTRA = # Put your configuration file here, see scripts/pnglibconf.dfa.  Eg:
+# DFA_XTRA = pngusr.dfa
 
 # CPPFLAGS should contain the options to control the result,
 # but DEFS and CFLAGS are also supported here, override
@@ -48,6 +49,7 @@ pnglibconf.dfn: $(srcdir)/scripts/pnglibconf.dfa $(srcdir)/scripts/options.awk $
 	$(MOVE) pnglibconf.tmp $@
 
 clean-pnglibconf:
-	$(DELETE) pnglibconf.*
+	$(DELETE) pnglibconf.h pnglibconf.c pnglibconf.out pnglibconf.pre \
+	pnglibconf.dfn
 
 clean: clean-pnglibconf

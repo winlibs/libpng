@@ -19,8 +19,8 @@ ZLIBINC=/opt/zlib/include
 #   SHAREDLIB=libz.sl
 
 # Library name:
-LIBNAME = libpng15
-PNGMAJ = 15
+LIBNAME = libpng16
+PNGMAJ = 16
 
 # Shared library names:
 LIBSO=$(LIBNAME).sl
@@ -34,6 +34,7 @@ CC=cc
 MKDIR_P=mkdir -p
 LN_SF=ln -sf
 RANLIB=ranlib
+CP=cp
 RM_F=/bin/rm -f
 
 CPPFLAGS=-I$(ZLIBINC) \
@@ -44,7 +45,7 @@ CCFLAGS=-O -Ae -Wl,+vnocompatwarnings +DD64 +Z
 
 LDFLAGS=-L. -L$(ZLIBLIB) -lpng -lz -lm
 
-# where make install puts libpng.a, libpng15.sl, and png.h
+# where make install puts libpng.a, libpng16.sl, and png.h
 prefix=/opt/libpng
 exec_prefix=$(prefix)
 INCPATH=$(prefix)/include
@@ -67,6 +68,10 @@ DI=$(DESTDIR)$(INCPATH)
 DL=$(DESTDIR)$(LIBPATH)
 DM=$(DESTDIR)$(MANPATH)
 
+# Pre-built configuration
+# See scripts/pnglibconf.mak for more options
+PNGLIBCONF_H_PREBUILT = scripts/pnglibconf.h.prebuilt
+
 OBJS = png.o pngset.o pngget.o pngrutil.o pngtrans.o pngwutil.o \
 	pngread.o pngrio.o pngwio.o pngwrite.o pngrtran.o \
 	pngwtran.o pngmem.o pngerror.o pngpread.o
@@ -83,9 +88,8 @@ OBJSDLL = $(OBJS:.o=.pic.o)
 
 all: libpng.a $(LIBSO) pngtest libpng.pc libpng-config
 
-# see scripts/pnglibconf.mak for more options
-pnglibconf.h: scripts/pnglibconf.h.prebuilt
-	cp scripts/pnglibconf.h.prebuilt $@
+pnglibconf.h: $(PNGLIBCONF_H_PREBUILT)
+	$(CP) $(PNGLIBCONF_H_PREBUILT) $@
 
 libpng.a: $(OBJS)
 	$(AR_RC) $@ $(OBJS)
@@ -96,15 +100,15 @@ libpng.pc:
 	-e s!@exec_prefix@!$(exec_prefix)! \
 	-e s!@libdir@!$(LIBPATH)! \
 	-e s!@includedir@!$(INCPATH)! \
-	-e s!-lpng15!-lpng15\ -lz\ -lm! > libpng.pc
+	-e s!-lpng16!-lpng16\ -lz\ -lm! > libpng.pc
 
 libpng-config:
 	( cat scripts/libpng-config-head.in; \
 	echo prefix=\"$(prefix)\"; \
 	echo I_opts=\"-I$(INCPATH)/$(LIBNAME)\"; \
-	echo ccopts=\"-Ae +DA1.1 +DS2.0\"; \
+	echo ccopts=\"-O -Ae -Wl,+vnocompatwarnings +DD64 +Z\"; \
 	echo L_opts=\"-L$(LIBPATH)\"; \
-	echo libs=\"-lpng15 -lz -lm\"; \
+	echo libs=\"-lpng16 -lz -lm\"; \
 	cat scripts/libpng-config-body.in ) > libpng-config
 	chmod +x libpng-config
 

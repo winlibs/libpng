@@ -16,8 +16,8 @@ prefix=/usr/local
 exec_prefix=$(prefix)
 
 # Library name:
-LIBNAME = libpng15
-PNGMAJ = 15
+LIBNAME = libpng16
+PNGMAJ = 16
 RELEASE = 18
 
 # Shared library names:
@@ -37,6 +37,7 @@ CC = gcc
 LD = $(CC)
 AR_RC = ar rcs
 RANLIB = ranlib
+CP = cp
 RM_F = rm -rf
 MKDIR_P=mkdir -p
 LN_SF=ln -sf
@@ -73,6 +74,10 @@ DI=$(DESTDIR)$(INCPATH)
 DL=$(DESTDIR)$(LIBPATH)
 DM=$(DESTDIR)$(MANPATH)
 
+# Pre-built configuration
+# See scripts/pnglibconf.mak for more options
+PNGLIBCONF_H_PREBUILT = scripts/pnglibconf.h.prebuilt
+
 # Variables
 OBJS =  png.o pngerror.o pngget.o pngmem.o pngpread.o \
 	pngread.o pngrio.o pngrtran.o pngrutil.o pngset.o \
@@ -81,9 +86,8 @@ OBJS =  png.o pngerror.o pngget.o pngmem.o pngpread.o \
 # Targets
 all: static shared
 
-# see scripts/pnglibconf.mak for more options
-pnglibconf.h: scripts/pnglibconf.h.prebuilt
-	cp scripts/pnglibconf.h.prebuilt $@
+pnglibconf.h: $(PNGLIBCONF_H_PREBUILT)
+	$(CP) $(PNGLIBCONF_H_PREBUILT) $@
 
 .c.o:
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $<
@@ -122,7 +126,7 @@ libpng.pc:
 	-e s!@exec_prefix@!$(exec_prefix)! \
 	-e s!@libdir@!$(LIBPATH)! \
 	-e s!@includedir@!$(INCPATH)! \
-	-e s!-lpng15!-lpng15\ -lz\ -lm! > libpng.pc
+	-e s!-lpng16!-lpng16\ -lz\ -lm! > libpng.pc
 
 libpng-config:
 	( cat scripts/libpng-config-head.in; \
@@ -130,7 +134,7 @@ libpng-config:
 	echo I_opts=\"-I$(INCPATH)/$(LIBNAME)\"; \
 	echo L_opts=\"-L$(LIBPATH)\"; \
 	echo R_opts=\"-Wl,-rpath,$(LIBPATH)\"; \
-	echo libs=\"-lpng15 -lz -lm\"; \
+	echo libs=\"-lpng16 -lz -lm\"; \
 	cat scripts/libpng-config-body.in ) > libpng-config
 
 install-shared: install-headers $(LIBSOMAJ) libpng.pc
