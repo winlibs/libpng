@@ -1,11 +1,10 @@
 
 /* pngstruct.h - header file for PNG reference library
  *
- * Copyright (c) 1998-2013 Glenn Randers-Pehrson
+ * Last changed in libpng 1.5.23 [July 23, 2015]
+ * Copyright (c) 1998-2002,2004,2006-2015 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
- *
- * Last changed in libpng 1.5.15 [March 28, 2013]
  *
  * This code is released under the libpng license.
  * For conditions of distribution and use, see the disclaimer
@@ -235,16 +234,6 @@ struct png_struct_def
 
 #if defined(PNG_READ_QUANTIZE_SUPPORTED) || defined(PNG_hIST_SUPPORTED)
    png_uint_16p hist;                /* histogram */
-#endif
-
-#ifdef PNG_WRITE_WEIGHTED_FILTER_SUPPORTED
-   png_byte heuristic_method;        /* heuristic for row filter selection */
-   png_byte num_prev_filters;        /* number of weights for previous rows */
-   png_bytep prev_filters;           /* filter type(s) of previous row(s) */
-   png_uint_16p filter_weights;      /* weight(s) for previous line(s) */
-   png_uint_16p inv_filter_weights;  /* 1/weight(s) for previous line(s) */
-   png_uint_16p filter_costs;        /* relative filter calculation cost */
-   png_uint_16p inv_filter_costs;    /* 1/relative filter calculation cost */
 #endif
 
 #ifdef PNG_TIME_RFC1123_SUPPORTED

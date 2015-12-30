@@ -2,7 +2,7 @@
 /* pngmem.c - stub functions for memory allocation
  *
  * Last changed in libpng 1.5.13 [September 27, 2012]
- * Copyright (c) 1998-2012 Glenn Randers-Pehrson
+ * Copyright (c) 1998-2002,2004,2006-2012 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
  *
@@ -102,7 +102,7 @@ png_destroy_struct_2(png_voidp struct_ptr, png_free_ptr free_fn,
 }
 
 /* Allocate memory.  For reasonable files, size should never exceed
- * 64K.  However, zlib may allocate more then 64K if you don't tell
+ * 64K.  However, zlib may allocate more than 64K if you don't tell
  * it not to.  See zconf.h and png.h for more information. zlib does
  * need to allocate exactly 64K, so whatever you call here must
  * have the ability to do that.
@@ -475,7 +475,7 @@ png_destroy_struct_2(png_voidp struct_ptr, png_free_ptr free_fn,
 }
 
 /* Allocate memory.  For reasonable files, size should never exceed
- * 64K.  However, zlib may allocate more then 64K if you don't tell
+ * 64K.  However, zlib may allocate more than 64K if you don't tell
  * it not to.  See zconf.h and png.h for more information.  zlib does
  * need to allocate exactly 64K, so whatever you call here must
  * have the ability to do that.

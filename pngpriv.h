@@ -1,12 +1,10 @@
 
 /* pngpriv.h - private declarations for use inside libpng
  *
- * For conditions of distribution and use, see copyright notice in png.h
- * Copyright (c) 1998-2014 Glenn Randers-Pehrson
+ * Last changed in libpng 1.5.26 [December 17, 2015]
+ * Copyright (c) 1998-2002,2004,2006-2015 Glenn Randers-Pehrson
  * (Version 0.96 Copyright (c) 1996, 1997 Andreas Dilger)
  * (Version 0.88 Copyright (c) 1995, 1996 Guy Eric Schalnat, Group 42, Inc.)
- *
- * Last changed in libpng 1.5.18 [February 6, 2014]
  *
  * This code is released under the libpng license.
  * For conditions of distribution and use, see the disclaimer
@@ -190,36 +188,6 @@
  * real system capabilities.
  */
 
-#ifdef PNG_SAFE_LIMITS_SUPPORTED
-   /* 'safe' limits */
-#  ifndef PNG_USER_WIDTH_MAX
-#     define PNG_USER_WIDTH_MAX 1000000
-#  endif
-#  ifndef PNG_USER_HEIGHT_MAX
-#     define PNG_USER_HEIGHT_MAX 1000000
-#  endif
-#  ifndef PNG_USER_CHUNK_CACHE_MAX
-#     define PNG_USER_CHUNK_CACHE_MAX 128
-#  endif
-#  ifndef PNG_USER_CHUNK_MALLOC_MAX
-#     define PNG_USER_CHUNK_MALLOC_MAX 8000000
-#  endif
-#else
-   /* values for no limits */
-#  ifndef PNG_USER_WIDTH_MAX
-#     define PNG_USER_WIDTH_MAX 0x7fffffff
-#  endif
-#  ifndef PNG_USER_HEIGHT_MAX
-#     define PNG_USER_HEIGHT_MAX 0x7fffffff
-#  endif
-#  ifndef PNG_USER_CHUNK_CACHE_MAX
-#     define PNG_USER_CHUNK_CACHE_MAX 0
-#  endif
-#  ifndef PNG_USER_CHUNK_MALLOC_MAX
-#     define PNG_USER_CHUNK_MALLOC_MAX 0
-#  endif
-#endif
-
 /* config.h is created by and PNG_CONFIGURE_LIBPNG is set by the "configure"
  * script.  We may need it here to get the correct configuration on things
  * like limits.
@@ -230,9 +198,11 @@
 #  endif
 #endif
 
-/* Moved to pngpriv.h at libpng-1.5.0 */
-/* NOTE: some of these may have been used in external applications as
- * these definitions were exposed in pngconf.h prior to 1.5.
+/* SECURITY and SAFETY:
+ *
+ * libpng is built with support for internal limits on image dimensions and
+ * memory usage.  These are documented in scripts/pnglibconf.dfa of the
+ * source and recorded in the machine generated header file pnglibconf.h.
  */
 
 /* If you are running on a machine where you cannot allocate more
@@ -249,6 +219,11 @@
 #if defined(MAXSEG_64K) && !defined(PNG_MAX_MALLOC_64K)
 #  define PNG_MAX_MALLOC_64K
 #endif
+
+/* Moved to pngpriv.h at libpng-1.5.0 */
+/* NOTE: some of these may have been used in external applications as
+ * these definitions were exposed in pngconf.h prior to 1.5.
+ */
 
 #ifndef PNG_UNUSED
 /* Unused formal parameter warnings are silenced using the following macro
@@ -299,8 +274,6 @@
 #ifdef PNG_WARNINGS_SUPPORTED
 #  define PNG_WARNING_PARAMETERS(p) png_warning_parameters p;
 #else
-#  define png_warning(s1,s2) ((void)(s1))
-#  define png_chunk_warning(s1,s2) ((void)(s1))
 #  define png_warning_parameter(p,number,string) ((void)0)
 #  define png_warning_parameter_unsigned(p,number,format,value) ((void)0)
 #  define png_warning_parameter_signed(p,number,format,value) ((void)0)
@@ -308,8 +281,6 @@
 #  define PNG_WARNING_PARAMETERS(p)
 #endif
 #ifndef PNG_ERROR_TEXT_SUPPORTED
-#  define png_error(s1,s2) png_err(s1)
-#  define png_chunk_error(s1,s2) png_err(s1)
 #  define png_fixed_error(s1,s2) png_err(s1)
 #endif
 
@@ -424,7 +395,7 @@
 #    define CVT_PTR_NOCHECK(ptr) (ptr)
 #    define png_strlen  lstrlenA
 #    define png_memcmp  memcmp
-#    define png_memcpy  CopyMemory
+#    define png_memcpy  memcpy
 #    define png_memset  memset
 #  else
 #    define CVT_PTR(ptr)         (ptr)
@@ -545,10 +516,6 @@
 /* Flags for png_create_struct */
 #define PNG_STRUCT_PNG   0x0001
 #define PNG_STRUCT_INFO  0x0002
-
-/* Scaling factor for filter heuristic weighting calculations */
-#define PNG_WEIGHT_FACTOR (1<<(PNG_WEIGHT_SHIFT))
-#define PNG_COST_FACTOR (1<<(PNG_COST_SHIFT))
 
 /* Flags for the png_ptr->flags rather than declaring a byte for each one */
 #define PNG_FLAG_ZLIB_CUSTOM_STRATEGY     0x0001
@@ -932,13 +899,6 @@ PNG_EXTERN void png_write_bKGD PNGARG((png_structp png_ptr,
 #ifdef PNG_WRITE_hIST_SUPPORTED
 PNG_EXTERN void png_write_hIST PNGARG((png_structp png_ptr,
     png_const_uint_16p hist, int num_hist));
-#endif
-
-/* Chunks that have keywords */
-#if defined(PNG_WRITE_TEXT_SUPPORTED) || defined(PNG_WRITE_pCAL_SUPPORTED) || \
-    defined(PNG_WRITE_iCCP_SUPPORTED) || defined(PNG_WRITE_sPLT_SUPPORTED)
-PNG_EXTERN png_size_t png_check_keyword PNGARG((png_structp png_ptr,
-    png_const_charp key, png_charpp new_key));
 #endif
 
 #ifdef PNG_WRITE_tEXt_SUPPORTED
@@ -1346,9 +1306,6 @@ PNG_EXTERN void png_push_read_chunk PNGARG((png_structp png_ptr,
 PNG_EXTERN void png_push_read_sig PNGARG((png_structp png_ptr,
     png_infop info_ptr));
 PNG_EXTERN void png_push_check_crc PNGARG((png_structp png_ptr));
-PNG_EXTERN void png_push_crc_skip PNGARG((png_structp png_ptr,
-    png_uint_32 length));
-PNG_EXTERN void png_push_crc_finish PNGARG((png_structp png_ptr));
 PNG_EXTERN void png_push_save_buffer PNGARG((png_structp png_ptr));
 PNG_EXTERN void png_push_restore_buffer PNGARG((png_structp png_ptr,
     png_bytep buffer, png_size_t buffer_length));
