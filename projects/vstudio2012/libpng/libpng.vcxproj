@@ -117,22 +117,22 @@
     <LinkIncremental>false</LinkIncremental>
     <CustomBuildBeforeTargets>
     </CustomBuildBeforeTargets>
-    <TargetName>$(ProjectName)15</TargetName>
+    <TargetName>$(ProjectName)_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>false</LinkIncremental>
     <CustomBuildBeforeTargets />
-    <TargetName>$(ProjectName)15</TargetName>
+    <TargetName>$(ProjectName)_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Library|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <CustomBuildBeforeTargets />
-    <TargetName>$(ProjectName)15</TargetName>
+    <TargetName>$(ProjectName)_a_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Library|x64'">
     <LinkIncremental>false</LinkIncremental>
     <CustomBuildBeforeTargets />
-    <TargetName>$(ProjectName)15</TargetName>
+    <TargetName>$(ProjectName)_a_debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -148,12 +148,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Library|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <CustomBuildBeforeTargets />
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)_a</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Library|x64'">
     <LinkIncremental>false</LinkIncremental>
     <CustomBuildBeforeTargets />
-    <TargetName>$(ProjectName)</TargetName>
+    <TargetName>$(ProjectName)_a</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -358,7 +358,7 @@
     </Link>
     <Lib>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
-      <OutputFile>$(OutDir)$(TargetName)_a$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Library|x64'">
@@ -392,7 +392,7 @@
     </Link>
     <Lib>
       <LinkTimeCodeGeneration>true</LinkTimeCodeGeneration>
-      <OutputFile>$(OutDir)$(TargetName)_a$(TargetExt)</OutputFile>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
