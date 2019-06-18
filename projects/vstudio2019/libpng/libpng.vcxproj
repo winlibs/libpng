@@ -187,6 +187,7 @@
       <AdditionalLibraryDirectories>$(OutDir)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)libpng_debug$(TargetExt)</OutputFile>
       <ProgramDatabaseFile>$(OutDir)libpng_debug.pdb</ProgramDatabaseFile>
+      <ImportLibrary>$(OutDir)libpng_debug.lib</ImportLibrary>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
