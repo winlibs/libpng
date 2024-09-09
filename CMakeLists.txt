@@ -23,7 +23,7 @@ set(PNGLIB_REVISION 43)
 set(PNGLIB_SUBREVISION 0)
 #set(PNGLIB_SUBREVISION "git")
 set(PNGLIB_VERSION ${PNGLIB_MAJOR}.${PNGLIB_MINOR}.${PNGLIB_REVISION})
-set(PNGLIB_ABI_VERSION ${PNGLIB_MAJOR}${PNGLIB_MINOR})
+set(PNGLIB_ABI_VERSION "")
 set(PNGLIB_SHARED_VERSION ${PNGLIB_ABI_VERSION}.${PNGLIB_REVISION}.${PNGLIB_SUBREVISION})
 
 project(libpng
@@ -684,7 +684,7 @@ else()
   # We also need to use a custom suffix, in order to distinguish between the
   # shared import library name and the static library name.
   set(PNG_SHARED_OUTPUT_NAME "libpng${PNGLIB_ABI_VERSION}")
-  set(PNG_STATIC_OUTPUT_NAME "libpng${PNGLIB_ABI_VERSION}_static")
+  set(PNG_STATIC_OUTPUT_NAME "libpng${PNGLIB_ABI_VERSION}_a")
 endif()
 
 if(PNG_SHARED)
