@@ -1,6 +1,6 @@
 # Makefile.am, the source file for Makefile.in (and hence Makefile), is
 #
-# Copyright (c) 2018-2024 Cosmin Truta
+# Copyright (c) 2018-2026 Cosmin Truta
 # Copyright (c) 2004-2016 Glenn Randers-Pehrson
 #
 # This code is released under the libpng license.
@@ -73,21 +73,40 @@ endif
 if ENABLE_TESTS
 TESTS =\
    tests/pngtest-all\
-   tests/pngvalid-gamma-16-to-8 tests/pngvalid-gamma-alpha-mode\
-   tests/pngvalid-gamma-background tests/pngvalid-gamma-expand16-alpha-mode\
+   tests/pngvalid-gamma-16-to-8\
+   tests/pngvalid-gamma-alpha-mode\
+   tests/pngvalid-gamma-background\
+   tests/pngvalid-gamma-expand16-alpha-mode\
    tests/pngvalid-gamma-expand16-background\
-   tests/pngvalid-gamma-expand16-transform tests/pngvalid-gamma-sbit\
-   tests/pngvalid-gamma-threshold tests/pngvalid-gamma-transform\
+   tests/pngvalid-gamma-expand16-transform\
+   tests/pngvalid-gamma-sbit\
+   tests/pngvalid-gamma-threshold\
+   tests/pngvalid-gamma-transform\
    tests/pngvalid-progressive-size\
    tests/pngvalid-progressive-interlace-standard\
    tests/pngvalid-transform\
-   tests/pngvalid-progressive-standard tests/pngvalid-standard\
-   tests/pngstest-1.8 tests/pngstest-1.8-alpha tests/pngstest-linear\
-   tests/pngstest-linear-alpha tests/pngstest-none tests/pngstest-none-alpha\
-   tests/pngstest-sRGB tests/pngstest-sRGB-alpha tests/pngunknown-IDAT\
-   tests/pngunknown-discard tests/pngunknown-if-safe tests/pngunknown-sAPI\
-   tests/pngunknown-sTER tests/pngunknown-save tests/pngunknown-vpAg\
-   tests/pngimage-quick tests/pngimage-full
+   tests/pngvalid-progressive-standard\
+   tests/pngvalid-standard\
+   tests/pngstest-1.8\
+   tests/pngstest-1.8-alpha\
+   tests/pngstest-linear\
+   tests/pngstest-linear-alpha\
+   tests/pngstest-none\
+   tests/pngstest-none-alpha\
+   tests/pngstest-sRGB\
+   tests/pngstest-sRGB-alpha\
+   tests/pngstest-large-stride\
+   tests/pngstest-negative-stride\
+   tests/pngstest-negative-stride-extra\
+   tests/pngunknown-IDAT\
+   tests/pngunknown-discard\
+   tests/pngunknown-if-safe\
+   tests/pngunknown-sAPI\
+   tests/pngunknown-sTER\
+   tests/pngunknown-save\
+   tests/pngunknown-vpAg\
+   tests/pngimage-quick\
+   tests/pngimage-full
 endif
 
 # man pages
@@ -108,7 +127,7 @@ libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_SOURCES = png.c pngerror.c\
 
 if PNG_ARM_NEON
 libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_SOURCES += arm/arm_init.c\
-	arm/filter_neon.S arm/filter_neon_intrinsics.c \
+	arm/filter_neon_intrinsics.c \
 	arm/palette_neon_intrinsics.c
 endif
 
@@ -134,13 +153,20 @@ libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_SOURCES += powerpc/powerpc_init.c\
         powerpc/filter_vsx_intrinsics.c
 endif
 
+if PNG_RISCV_RVV
+noinst_LTLIBRARIES= libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@rvv.la
+libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@rvv_la_SOURCES = riscv/riscv_init.c\
+        riscv/filter_rvv_intrinsics.c
+libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@rvv_la_CFLAGS = -march=rv64gv
+libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_LIBADD = libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@rvv.la
+endif
+
 if PNG_LOONGARCH_LSX
 noinst_LTLIBRARIES= libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@lsx.la
 libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@lsx_la_SOURCES = loongarch/loongarch_lsx_init.c\
 	loongarch/filter_lsx_intrinsics.c
 libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@lsx_la_CFLAGS = -mlsx
 libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_LIBADD = libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@lsx.la
-# libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_DEPENDENCIES = libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@lsx.la
 endif
 
 nodist_libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_SOURCES = pnglibconf.h
@@ -161,6 +187,10 @@ else
 #   Only restricted exports when possible
   libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_LDFLAGS += -export-symbols libpng.sym
   libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_DEPENDENCIES = libpng.sym
+endif
+
+if PNG_RISCV_RVV
+  libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@_la_DEPENDENCIES += libpng@PNGLIB_MAJOR@@PNGLIB_MINOR@rvv.la
 endif
 
 if PNG_LOONGARCH_LSX
@@ -199,7 +229,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess config.h.in \
 config.sub configure depcomp install-sh ltmain.sh missing
 
 # PNG_COPTS give extra options for the C compiler to be used on all compilation
-# steps (unless targe_CFLAGS is specified; that will take precedence over
+# steps (unless target_CFLAGS is specified; that will take precedence over
 # AM_CFLAGS)
 PNG_COPTS = @PNG_COPTS@
 AM_CFLAGS = ${PNG_COPTS}
